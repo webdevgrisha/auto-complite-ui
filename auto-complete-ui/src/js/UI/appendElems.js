@@ -1,5 +1,5 @@
-function appendElems(parentElem, ...childreElems) {
-  parentElem.append(...childreElems);
+function appendElems(parentElem, ...childrenElems) {
+  parentElem.append(...childrenElems);
 }
 
 export { appendElems };

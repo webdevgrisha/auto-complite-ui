@@ -1,23 +1,25 @@
+import {
+  AVG_WORD_PX_LENGTH,
+  END_INDEX_COEFFICIENT,
+  OBSERVER_COEFFICIENT,
+  WORD_PX_HEIGHT,
+} from "../consts/consts.js";
+import { getNewElems } from "../http/getNewElems.js";
+import { appendElems } from "../UI/appendElems.js";
+import { createElement } from "../UI/createElement.js";
 import { createSearchResultsElements } from "../UI/createSearchResultsElements.js";
-import { autoComplete } from "../utils/initAutoComplete.js";
 
 const calcEndIndex = (startIndex) => {
-  const bodyRect = document.body.getBoundingClientRect();
+  const colCount = Math.ceil(window.innerWidth / AVG_WORD_PX_LENGTH);
+  const rowCount = Math.ceil(window.innerHeight / WORD_PX_HEIGHT);
 
-  const colCount = Math.ceil(window.innerWidth / 70);
-  const rowCount = Math.ceil(window.innerHeight / 50);
-
-  const endIndex = startIndex + colCount * rowCount * 2;
+  const endIndex = startIndex + colCount * rowCount * END_INDEX_COEFFICIENT;
 
   return endIndex;
 };
 
-const getNewElems = (wordsArr, startIndex, endIndex) => {
-  return wordsArr.slice(startIndex, endIndex);
-};
-
 const addElems = (ul, elemsArr, newElems) => {
-  if (newElems.length === 0) return;
+  if (!newElems.length) return;
 
   const fragment = createSearchResultsElements(newElems);
 
@@ -30,13 +32,13 @@ const getObserveElem = (ulElem) => {
   const ulChildren = ulElem.children;
 
   const observeElem =
-    ulChildren[Math.floor((ulChildren.length * 80) / 100)] || ulChildren.at(-1);
+    ulChildren[Math.floor(ulChildren.length * OBSERVER_COEFFICIENT)] ||
+    ulChildren.at(-1);
 
-  console.log("observeElem: ", observeElem);
   return observeElem;
 };
 
-function infiniteScroll(word) {
+async function infiniteScroll(word, autoComplete) {
   const ul = document.querySelector(".search-result");
 
   let startIndex = 0;
@@ -46,26 +48,31 @@ function infiniteScroll(word) {
 
   ul.innerHTML = "";
 
-  if (!wordsArr.length) return;
+  if (!wordsArr.length) {
+    const h3 = createElement("h3", "Words not found");
+    appendElems(ul, h3);
+
+    return;
+  }
 
   const observer = new IntersectionObserver(observerCallback);
 
-  loadMore();
+  await loadMore();
 
   const observeElem = getObserveElem(ul);
   observer.observe(observeElem);
 
-  function observerCallback(entries, observer) {
+  async function observerCallback(entries, observer) {
     const entry = entries[0];
 
     if (!entry.isIntersecting) return;
     observer.unobserve(entry.target);
-    loadMore();
+    await loadMore();
   }
 
-  function loadMore() {
+  async function loadMore() {
     const endIndex = calcEndIndex(startIndex);
-    const newElems = getNewElems(wordsArr, startIndex, endIndex);
+    const newElems = await getNewElems(wordsArr, startIndex, endIndex);
     startIndex = endIndex;
 
     addElems(ul, elemsArr, newElems);

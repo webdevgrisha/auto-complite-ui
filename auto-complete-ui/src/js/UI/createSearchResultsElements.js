@@ -1,5 +1,3 @@
-"use strict";
-
 import { appendElems } from "./appendElems.js";
 import { createElement } from "./createElement.js";
 

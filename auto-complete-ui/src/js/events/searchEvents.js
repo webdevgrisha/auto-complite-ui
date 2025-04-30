@@ -1,20 +1,21 @@
-"use strict";
-
-
+import { INPUT_DEBOUNCE_DELAY_MS } from "../consts/consts.js";
 import { debounce } from "../utils/debounce.js";
+import { initAutoComplete } from "../utils/initAutoComplete.js";
 import { infiniteScroll } from "./infiniteScroll.js";
 
-function searchEvent(event) {
+function searchEvent(event, autoComplete) {
   const word = event.target.value;
 
-  infiniteScroll(word);
+  infiniteScroll(word, autoComplete);
 }
 
-function addSearchEvent() {
-  const input = document.querySelector(".search");
-  const evnetHandler = debounce(searchEvent, 400);
+async function addSearchEvent(inputSelector) {
+  const autoComplete = await initAutoComplete();
 
-  input.addEventListener("input", evnetHandler);
+  const input = document.querySelector(inputSelector);
+  const eventHandler = debounce(searchEvent, INPUT_DEBOUNCE_DELAY_MS);
+
+  input.addEventListener("input", (event) => eventHandler(event, autoComplete));
 }
 
 export { addSearchEvent };

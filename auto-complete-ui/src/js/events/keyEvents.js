@@ -3,7 +3,7 @@ import { updateInput } from "../utils/updateInput.js";
 function addKeyEvent() {
   document.addEventListener("keydown", (event) => {
     const focusedElement = document.activeElement;
-    console.log(focusedElement);
+
     if (!focusedElement.matches('li[tabindex="0"')) return;
 
     let nextElement = null;
@@ -11,13 +11,13 @@ function addKeyEvent() {
     if (event.key === "Enter") {
       updateInput(focusedElement);
     } else if (event.key === "ArrowRight") {
-        nextElement = focusedElement.nextElementSibling;
+      nextElement = focusedElement.nextElementSibling;
     } else if (event.key === "ArrowLeft") {
-        nextElement = focusedElement.previousElementSibling;
+      nextElement = focusedElement.previousElementSibling;
     }
 
-    if(nextElement) {
-        nextElement.focus();
+    if (nextElement) {
+      nextElement.focus();
     }
   });
 }

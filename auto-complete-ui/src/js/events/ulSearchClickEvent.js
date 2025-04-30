@@ -1,7 +1,7 @@
 import { updateInput } from "../utils/updateInput.js";
 
-function addClickEvent() {
-  const ul = document.querySelector("ul");
+function ulSearchClickEvent() {
+  const ul = document.querySelector(".search-result");
 
   ul.addEventListener("click", (event) => {
     const target = event.target;
@@ -12,4 +12,4 @@ function addClickEvent() {
   });
 }
 
-export { addClickEvent };
+export { ulSearchClickEvent };

@@ -1,10 +1,14 @@
-"use strict";
-
 import { createAutoComplete } from "../../../../auto-complete/index.js";
 
 async function loadCities() {
-  const response = await fetch("/cities.json");
-  const cites = await response.json();
+  let cites = null;
+
+  try {
+    const response = await fetch("/cities.json");
+    cites = await response.json();
+  } catch (err) {
+    throw Error("Error loadCites", err);
+  }
 
   return cites;
 }
@@ -12,11 +16,9 @@ async function loadCities() {
 async function initAutoComplete() {
   const cites = await loadCities();
 
-  autoComplete = createAutoComplete(cites);
+  const autoComplete = createAutoComplete(cites);
+
+  return autoComplete;
 }
 
-let autoComplete = null;
-
-initAutoComplete();
-
-export { autoComplete };
+export { initAutoComplete };
